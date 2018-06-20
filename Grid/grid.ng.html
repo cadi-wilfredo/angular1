@@ -1,0 +1,69 @@
+<div class="uk-overflow-auto">
+    <table class="uk-table uk-table-small uk-table-striped">
+        <thead>
+            <tr>
+                <th class="uk-table-shrink check-header">
+                    <label class="uk-width-1-1">
+                        <input ng-if="gridCmp.gridobj.paginator.items > 0" type="checkbox" class="uk-checkbox" ng-model="gridCmp.checkAll" ng-click="gridCmp.checkAllChange()"/>
+                        <b>#</b>
+                    </label>
+                </th>
+                <th ng-repeat="header in gridCmp.gridobj.headers" ng-class="[{'uk-width-medium':header.expand},{'uk-width-small':!header.expand}]"
+                    ng-click="gridCmp.changeHeaderOrder(header,$index)">
+                    <div class="uk-width-1-1" style="display: block">
+                        <span class="uk-float-left">{{ header.text|html }}</span>
+                        <i class="fa uk-float-right" ng-init="gridCmp.getHeaderOrder(header)" ng-class="header.class"></i>
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-if="gridCmp.gridobj.paginator.items === 0">
+                <th class="uk-text-center" colspan="{{ gridCmp.gridobj.headers.length + 1 }}">No existen datos para mostrar</th>
+            </tr>
+            <tr ng-if="gridCmp.gridobj.paginator.items > 0" ng-repeat="data in gridCmp.griddata" ng-class="{'selected':data.id === gridCmp.selectdata.id}">
+                <td>
+                    <label>
+                        <input type="checkbox" class="uk-checkbox" ng-model="gridCmp.datacheck[$index].check" ng-init="gridCmp.datacheck[$index].check = false;gridCmp.datacheck[$index].prop = gridCmp.getPropValue(gridCmp.gridobj.checkprop,data,0);" ng-change="gridCmp.changeCheckData()"/>
+                        {{ ($index + 1) + ((gridCmp.gridobj.paginator.currentPage - 1) * gridCmp.gridobj.paginator.itemsOnPage) }}
+                    </label>
+                </td>
+                <td ng-click="gridCmp.selectData(data)" ng-repeat="prop in gridCmp.gridobj.props">
+                    <div ng-switch="gridCmp.gridobj.propsconf[prop].type">
+                        <span ng-switch-when="img">
+                            <img ng-src="{{ gridCmp.getPropValue(prop,data,0,gridCmp.gridobj.propsconf[prop]) }}" alt="gridCmp.getPropValue(prop,data,0)" width="{{gridCmp.gridobj.propsconf[prop].size}}" style="height: 80px;"/>
+                        </span>
+                        <span ng-switch-when="video">
+                            <!--<div ng-thumb="{ type:'video', file: null, height: 200, src: gridCmp.getPropValue(prop,data,0,gridCmp.gridobj.propsconf[prop]) }"></div>-->
+                            <video controls preload="none" style="height: 150px;"> 
+                                <source type="video/webm" src="{{gridCmp.getPropValue(prop,data,0,gridCmp.gridobj.propsconf[prop])}}"> 
+                            </video>
+                            <!--<video src="{{ gridCmp.getPropValue(prop,data,0,gridCmp.gridobj.propsconf[prop]) }}" controls width="{{gridCmp.gridobj.propsconf[prop].size}}"></video>-->
+                        </span>
+                        <span ng-switch-when="size">
+                         {{ gridCmp.getPropValue(prop,data,0,gridCmp.gridobj.propsconf[prop]) | showSize }}
+                        </span>
+                        <span ng-switch-default ng-bind-html="gridCmp.getPropValue(prop,data,0,gridCmp.gridobj.propsconf[prop]) | html"></span>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div uk-grid>
+        <div class="uk-width-2-5">
+            <div class="uk-button-group">
+                <button class="uk-button uk-button-small" ng-if="gridCmp.gridobj.paginator.items>5" ng-click="gridCmp.setItemsOnPage(5)"
+                    ng-class="{'uk-button-primary':gridCmp.gridobj.paginator.itemsOnPage===5}">5</button>
+                <button class="uk-button uk-button-small" ng-if="gridCmp.gridobj.paginator.items>5" ng-click="gridCmp.setItemsOnPage(10)"
+                    ng-class="{'uk-button-primary':gridCmp.gridobj.paginator.itemsOnPage===10}">10</button>
+                <button class="uk-button uk-button-small" ng-if="gridCmp.gridobj.paginator.items>10" ng-click="gridCmp.setItemsOnPage(20)"
+                    ng-class="{'uk-button-primary':gridCmp.gridobj.paginator.itemsOnPage===20}">20</button>
+                <button class="uk-button uk-button-small" ng-if="gridCmp.gridobj.paginator.items>20" ng-click="gridCmp.setItemsOnPage(40)"
+                    ng-class="{'uk-button-primary':gridCmp.gridobj.paginator.itemsOnPage===40}">40</button>
+            </div>
+        </div>
+        <div class="uk-width-3-5 pagination-container">
+            <ul class="uk-pagination uk-flex-right" compile-template ng-bind-html="gridCmp.paginatorHtml | html"></ul>
+        </div>
+    </div>
+</div>
