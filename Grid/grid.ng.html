@@ -34,11 +34,9 @@
                             <img ng-src="{{ gridCmp.getPropValue(prop,data,0,gridCmp.gridobj.propsconf[prop]) }}" alt="gridCmp.getPropValue(prop,data,0)" width="{{gridCmp.gridobj.propsconf[prop].size}}" style="height: 80px;"/>
                         </span>
                         <span ng-switch-when="video">
-                            <!--<div ng-thumb="{ type:'video', file: null, height: 200, src: gridCmp.getPropValue(prop,data,0,gridCmp.gridobj.propsconf[prop]) }"></div>-->
                             <video controls preload="none" style="height: 150px;"> 
                                 <source type="video/webm" src="{{gridCmp.getPropValue(prop,data,0,gridCmp.gridobj.propsconf[prop])}}"> 
                             </video>
-                            <!--<video src="{{ gridCmp.getPropValue(prop,data,0,gridCmp.gridobj.propsconf[prop]) }}" controls width="{{gridCmp.gridobj.propsconf[prop].size}}"></video>-->
                         </span>
                         <span ng-switch-when="size">
                          {{ gridCmp.getPropValue(prop,data,0,gridCmp.gridobj.propsconf[prop]) | showSize }}
