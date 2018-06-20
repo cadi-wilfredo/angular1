@@ -1,0 +1,107 @@
+<form name="{{ $ctrl.formname }}" ng-cloak class="uk-width-1-1 uk-form-stacked">
+    <div ng-repeat="(k, col) in $ctrl.grid track by k" ng-class="[{'uk-form-row':col != '|'},{'uk-margin-large-top':col === '|'}]"
+        uk-grid>
+        <div ng-repeat="(i,field) in $ctrl.fields" ng-if="!field.excludeif && $index >= ($ctrl.sumA[k] - col) && $index < $ctrl.sumA[k] && $ctrl.validConditions(field) && !field.hidden"
+            class="uk-width-1-{{col}}" ng-class="{'required': (field.required && !field.readonly && !field.disabled)}">
+            <label for="field{{$index}}" class="uk-form-label">
+                {{field.label | html }}&nbsp;
+                <i ng-if="field.required && !field.readonly && !field.disabled" class="fa fa-asterisk"></i>
+            </label>
+            <div class="uk-form-controls">
+                <select ng-if="field.type === 'select' && field.multiple" ng-model="$ctrl.model[field.field]" class="uk-width-1-1 uk-select" id="field{{$index}}"
+                        ng-selected="option[field.valprop] === $ctrl.model[field.field]" multiple name="field{{$index}}" ng-required="field.required && !field.readonly && !field.disabled"
+                        ng-class="[{ 'uk-form-danger' : !{{ $ctrl.formname }}.field{{ $index }}.$valid && !field.readonly && !field.disabled},{ 'uk-form-success' : {{ $ctrl.formname }}.field{{$index}}.$valid && !field.readonly && !field.disabled}]">
+                    <option value="" ng-if="!field.required">{{ field.blank }}</option>
+                    <option ng-if="!field.filter || field.filter && (option[field.filter.prop] === $ctrl.model[field.filter.field])" ng-value="option[field.valprop]" ng-repeat="(o, option) in field.factory.responseData.items track by o">
+                        {{ option[field.optprop] | html }}
+                    </option>
+                </select>
+                <select ng-if="field.type === 'select' && !field.multiple" ng-model="$ctrl.model[field.field]" class="uk-width-1-1 uk-select" id="field{{$index}}"
+                    ng-selected="option[field.valprop] === $ctrl.model[field.field]" name="field{{$index}}" ng-required="field.required && !field.readonly && !field.disabled"
+                    ng-class="[{ 'uk-form-danger' : !{{ $ctrl.formname }}.field{{ $index }}.$valid && !field.readonly && !field.disabled},{ 'uk-form-success' : {{ $ctrl.formname }}.field{{$index}}.$valid && !field.readonly && !field.disabled}]">
+                    <option value="" ng-if="!field.required">{{ field.blank }}</option>
+                    <option ng-if="!field.filter || field.filter && (option[field.filter.prop] === $ctrl.model[field.filter.field])" ng-value="option[field.valprop]" ng-repeat="(o, option) in field.factory.responseData.items track by o">
+                        {{ option[field.optprop] | html }}
+                    </option>
+                </select>
+
+                <textarea ng-if="field.type === 'textarea'" rows="{{field.rows}}" id="field{{$index}}" name="field{{$index}}" type="{{field.type}}"
+                    ng-class="[{ 'uk-form-danger' : !{{ $ctrl.formname }}.field{{$index}}.$valid && !field.readonly && !field.disabled},{ 'uk-form-success' : {{ $ctrl.formname }}.field{{$index}}.$valid && !field.readonly && !field.disabled}]"
+                    ng-model="$ctrl.model[field.field]" class="uk-width-1-1" ng-required="field.required && !field.readonly && !field.disabled"
+                    ng-readonly="field.readonly" ng-disabled="field.disabled" ng-maxlength="field.maxlength" ng-minlength="field.minlength"></textarea>
+
+                <ng-ckeditor ng-config="$ctrl.options" id="field{{$index}}" bind="field{{$index}}" ng-if="field.type === 'ckeditor'" name="field{{$index}}"
+                    class="uk-width-1-1" ng-model="$ctrl.model[field.field]" skin="office2013" remove-buttons="Image" remove-plugins="iframe,flash,smiley"></ng-ckeditor>
+
+                <checkbox id="field{{$index}}" name="field{{$index}}" ng-if="field.type === 'checkbox'" class="toggle uk-width-1-1" checked="field.value"
+                    ng-model="$ctrl.model[field.field]" ng-click="field.change(field,$ctrl.model[field.field],$ctrl)"></checkbox>
+
+                <div class="uk-width-1-1 uk-inline" ng-if="field.type != 'file' &&field.type != 'date' && field.type != 'checkbox' && field.type != 'radio' && field.type != 'select' && field.type != 'textarea'">
+                    <a href class="uk-form-icon" ng-class="[{'uk-button-reveal':field.reveal && !field.readonly && !field.disabled}]"
+                        ng-if="field.reveal && !field.readonly && !field.disabled" ng-click="$ctrl.reveal(field)">
+                        <i class="icon-eye"></i>
+                    </a>
+                    <input id="field{{$index}}" name="field{{$index}}" ng-pattern="(field.equalto)?$ctrl.model[field.equalto]:''" type="{{field.type}}" class="uk-width-1-1 uk-input" ng-model="$ctrl.model[field.field]"
+                        placeholder="{{field.placeholder}}" ng-required="field.required && !field.readonly && !field.disabled"
+                        ng-readonly="field.readonly" ng-disabled="field.disabled" ng-maxlength="field.maxlength" ng-minlength="field.minlength"
+                        ng-min="field.min" ng-max="field.max" ng-class="[{ 'uk-form-danger' : !{{ $ctrl.formname }}.field{{$index}}.$valid && !field.readonly && !field.disabled},{ 'uk-form-success' : {{ $ctrl.formname }}.field{{$index}}.$valid  && !field.readonly && !field.disabled},{'uk-input-reveal':field.reveal && !field.readonly && !field.disabled},{'uk-input-generate':field.generate && !field.readonly && !field.disabled}]"
+                    />
+                    <a href class="uk-form-icon uk-form-icon-flip" ng-class="[{'uk-button-generate':field.generate && !field.readonly && !field.disabled}]"
+                        ng-if="field.generate && !field.readonly && !field.disabled" ng-click="$ctrl.model[field.field]=$ctrl.generate(field)">
+                        <i class="icon-shuffle"></i>
+                    </a>
+                </div>
+                <div class="util-uk-form uk-width-1-1" ng-if="field.type === 'file' && $ctrl.uploader" uk-grid>
+                    <div uk-form-custom class="uk-width-1-3" ng-click="$ctrl.uploader.clearQueue()">
+                        <input nv-file-select="" uploader="$ctrl.uploader" type="{{field.type}}" ng-model="$ctrl.model[field.field]" ng-required="$ctrl.validIfFilesRequired(field)"
+                        />
+                        <button class="uk-button uk-button-default" type="button" tabindex="-1">Seleccione</button>
+                    </div>
+
+                    <div ng-repeat="item in $ctrl.uploader.queue" class="uk-width-2-3">
+                        <div class="uk-card uk-card-default uk-grid-collapse uk-child-width-1-2@s uk-margin" uk-grid>
+                            <div class="uk-card-media-left uk-cover-container" ng-thumb="{ file: item._file, height: 200 }"></div>
+                            <div>
+                                <div class="uk-card-body" style="padding: 10px 20px;">
+                                    <button ng-click="item.remove()" class="uk-button uk-button-text">
+                                        <i class="icon-close"></i> Eliminar
+                                    </button>
+                                </div>
+                                <div class="uk-card-footer">
+                                    <h4>{{ item.file.name }}</h4>
+                                    <p>Tamaño: {{ item.file.size/1024/1024|number:2 }} MB</p>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div ng-if="field.type === 'radio'" class="grouped fields">
+                    <div ng-repeat="opt in field.opts" class="field">
+                        <div class="ui slider checkbox">
+                            <input id="field{{i}}{{$index}}" ng-click="field.change(field,$ctrl.model[field.field],$ctrl)" name="field[i}}{{$index}}"
+                                type="radio" ng-model="$ctrl.model[field.field]" ng-value="opt.val" />
+                            <label for="field{{i}}{{$index}}"> {{ opt.label | html }}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-width-1-1">
+                    <input ng-if="field.type === 'date'" date-time format="{{ field.format }}" view="{{ field.view }}" min-view="{{ field.minview }}"
+                        timezone="UTC" ng-model="$ctrl.model[field.field]" ng-required="field.required && !field.readonly && !field.disabled"
+                        ng-readonly="field.readonly" ng-disabled="field.disabled" class="uk-width-1-1" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    <div class="uk-button-group uk-float-right">
+        <button ng-repeat="(k, btn) in $ctrl.btns track by k" ng-if="!btn.excludeif" type="button" class="uk-button" ng-class="[btn.class,{'disabled':(btn.validable && !{{ $ctrl.formname }}.$valid)},{'uk-margin-small-right':!$last}]"
+            ng-click="btn.handler($ctrl.fields, $ctrl.model, $ctrl)" ng-disabled="btn.validable && !{{ $ctrl.formname }}.$valid"
+            ng-bind-html="btn.label | html"></button>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+</form>
