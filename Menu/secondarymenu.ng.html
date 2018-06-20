@@ -1,0 +1,8 @@
+<div class="uk-card uk-card-small uk-card-body uk-width-1-1">
+    <ul ng-show="$ctrl.secondarymenu" class="uk-nav uk-nav-default  application-submenu" data-uk-nav="multiple: true;">
+        <li ng-repeat="item in $ctrl.secondarymenu" ng-class="{'uk-active': item.url === $ctrl.active_item2.url}">
+            <a ui-sref="{{$ctrl.active_item1.cmp + 'Action.' + item.cmp + 'Action'}}" ui-sref-opts="{reload: item.reload}">
+                <i class="{{ ::item.icon }}"></i> {{ ::item.title }}</a>
+        </li>
+    </ul>
+</div>

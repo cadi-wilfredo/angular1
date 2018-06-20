@@ -1,0 +1,9 @@
+<div class="uk-width-1-1">
+    <ul class="uk-nav-default uk-nav-center uk-nav-parent-icon uk-iconnav uk-iconnav-vertical uk-margin-small-top"
+        uk-nav>
+        <li ng-repeat="item in $ctrl.mainmenu" ng-class="{'uk-active': item.url === $ctrl.active_item.url}">
+            <a ui-sref="{{item.cmp + 'Action'}}" ui-sref-opts="{reload: item.reload}" href><i
+                    ng-class="[item.icon]"></i><br/>{{ ::item.title }}</a>
+        </li>
+    </ul>
+</div>
